@@ -1,0 +1,5 @@
+# Extra dependencies for generating the static PDF (build_report.py).
+# After installing, run once: python -m playwright install chromium
+matplotlib>=3.7
+jinja2>=3.1
+playwright>=1.40
