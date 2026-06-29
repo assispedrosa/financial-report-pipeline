@@ -43,7 +43,7 @@ def _chart_revenue_ebitda(pnl) -> str:
     x = pnl.index
     ax.bar(x, pnl["Revenue"], width=20, color=INK, alpha=0.85, label="Revenue")
     ax.plot(x, pnl["EBITDA"], color=ACCENT, lw=2.2, marker="o", ms=3, label="EBITDA")
-    ax.set_ylabel("BRL '000")
+    ax.set_ylabel("USD '000")
     ax.legend(frameon=False, fontsize=8, loc="upper left")
     ax.spines[["top", "right"]].set_visible(False)
     ax.tick_params(labelsize=8)
@@ -105,7 +105,7 @@ TEMPLATE = Template(
   <div class="top">
     <div>
       <div class="company">{{ company }}</div>
-      <div class="subtitle">Monthly Management Report &middot; values in BRL '000</div>
+      <div class="subtitle">Monthly Management Report &middot; figures in USD thousands</div>
     </div>
     <div class="period">{{ period }}</div>
   </div>
@@ -154,8 +154,8 @@ def render_html(data: dict) -> str:
     bu_rows = [
         dict(
             name=name,
-            rev=f"{by_bu.at[name, 'Revenue']:,.0f}",
-            ebitda=f"{by_bu.at[name, 'EBITDA']:,.0f}",
+            rev=f"${by_bu.at[name, 'Revenue']:,.0f}k",
+            ebitda=f"${by_bu.at[name, 'EBITDA']:,.0f}k",
             margin=f"{by_bu.at[name, 'EBITDA Margin']:.1%}",
         )
         for name in by_bu.index
@@ -164,8 +164,8 @@ def render_html(data: dict) -> str:
         ink=INK, accent=ACCENT, grey=GREY,
         company=data["company"],
         period=f"{k.month:%B %Y}",
-        revenue=f"{k.revenue:,.0f}",
-        ebitda=f"{k.ebitda:,.0f}",
+        revenue=f"${k.revenue:,.0f}k",
+        ebitda=f"${k.ebitda:,.0f}k",
         ebitda_margin=f"{k.ebitda_margin:.1%}",
         gross_margin=f"{k.gross_margin:.1%}",
         mom=f"{k.rev_mom:+.1%}", yoy=f"{k.rev_yoy:+.1%}",

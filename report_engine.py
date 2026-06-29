@@ -173,7 +173,7 @@ def build_report_data(path: str = RAW_PATH) -> dict:
         "pnl": pnl,
         "by_bu": pnl_by_bu(actuals),
         "kpis": compute_kpis(pnl, budget),
-        "company": "Meridian Industries S.A.",
+        "company": "Meridian Industries Inc.",
     }
 
 

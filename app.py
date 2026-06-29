@@ -32,10 +32,29 @@ pnl_all = eng.pnl_by_month(actuals)
 months = list(pnl_all.index)
 
 # --- Sidebar -------------------------------------------------------------
+# Month picker built for a busy reader: a dropdown to jump straight to any
+# month, plus ◀ ▶ buttons to step one month at a time with a single click —
+# no imprecise dragging.
 st.sidebar.title("Reporting period")
-sel = st.sidebar.select_slider(
-    "As-of month", options=months, value=months[-1], format_func=lambda d: d.strftime("%b/%Y")
-)
+labels = [d.strftime("%b %Y") for d in months]
+if "month_label" not in st.session_state:
+    st.session_state.month_label = labels[-1]
+
+
+def _step(delta: int) -> None:
+    i = labels.index(st.session_state.month_label)
+    st.session_state.month_label = labels[max(0, min(len(labels) - 1, i + delta))]
+
+
+st.sidebar.markdown("**Reporting month**")
+bc = st.sidebar.columns([1, 3, 1])
+bc[0].button("◀", on_click=_step, args=(-1,), use_container_width=True,
+             help="Previous month")
+bc[2].button("▶", on_click=_step, args=(1,), use_container_width=True,
+             help="Next month")
+bc[1].selectbox("month", labels, key="month_label", label_visibility="collapsed")
+
+sel = months[labels.index(st.session_state.month_label)]
 pnl = pnl_all.loc[:sel]
 kpis = eng.compute_kpis(pnl, budget)
 by_bu = eng.pnl_by_bu(actuals, sel)
@@ -46,12 +65,12 @@ st.sidebar.caption(
 )
 
 # --- Header + KPIs -------------------------------------------------------
-st.title("📊 Management Report — Meridian Industries S.A.")
-st.caption(f"Monthly management P&L · values in BRL '000 · as of **{sel:%B %Y}**")
+st.title("📊 Management Report — Meridian Industries Inc.")
+st.caption(f"Monthly management P&L · figures in USD thousands · as of **{sel:%B %Y}**")
 
 c = st.columns(4)
-c[0].metric("Revenue", f"{kpis.revenue:,.0f}", f"{kpis.rev_mom:+.1%} MoM")
-c[1].metric("EBITDA", f"{kpis.ebitda:,.0f}", f"{kpis.ebitda_margin:.1%} margin")
+c[0].metric("Revenue", f"${kpis.revenue:,.0f}k", f"{kpis.rev_mom:+.1%} MoM")
+c[1].metric("EBITDA", f"${kpis.ebitda:,.0f}k", f"{kpis.ebitda_margin:.1%} margin")
 c[2].metric("Gross margin", f"{kpis.gross_margin:.1%}")
 c[3].metric("Revenue vs budget (YTD)", f"{kpis.rev_vs_budget:+.1%}",
             help="YTD actual revenue vs the prorated full-year budget.")
@@ -68,7 +87,7 @@ with left:
     fig.add_scatter(x=pnl.index, y=pnl["EBITDA"], name="EBITDA",
                     mode="lines+markers", line=dict(color=ACCENT, width=3))
     fig.update_layout(height=330, margin=dict(t=10, b=10), legend=dict(orientation="h"),
-                      yaxis_title="BRL '000")
+                      yaxis_title="USD '000")
     st.plotly_chart(fig, use_container_width=True)
 
 with right:
@@ -86,7 +105,7 @@ with right:
         increasing=dict(marker=dict(color=INK)),
         totals=dict(marker=dict(color="#137333")),
     ))
-    wf.update_layout(height=330, margin=dict(t=10, b=10), yaxis_title="BRL '000")
+    wf.update_layout(height=330, margin=dict(t=10, b=10), yaxis_title="USD '000")
     st.plotly_chart(wf, use_container_width=True)
 
 st.divider()
@@ -111,7 +130,7 @@ with g2:
     bar.add_bar(x=["Actual", "Budget (prorated)"],
                 y=[ytd["Revenue"].sum(), rev_bud],
                 marker_color=[INK, "#B7BECC"])
-    bar.update_layout(height=280, margin=dict(t=10, b=10), yaxis_title="BRL '000")
+    bar.update_layout(height=280, margin=dict(t=10, b=10), yaxis_title="USD '000")
     st.plotly_chart(bar, use_container_width=True)
 
 with g3:

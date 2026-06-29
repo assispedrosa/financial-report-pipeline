@@ -23,7 +23,7 @@ BUSINESS_UNITS = ["Retail", "Wholesale", "Online", "Services"]
 # P&L accounts we store at the granular level; everything else is derived.
 ACCOUNTS = ["Revenue", "COGS", "Sales & Marketing", "G&A", "R&D"]
 
-# Per-BU scale and economics (revenue base in BRL '000, margins as fractions).
+# Per-BU scale and economics (revenue base in USD thousands, margins as fractions).
 BU_PROFILE = {
     "Retail":    dict(base=1800, growth=0.010, season=0.18, cogs=0.62, sm=0.10, ga=0.07, rd=0.00),
     "Wholesale": dict(base=2600, growth=0.006, season=0.08, cogs=0.71, sm=0.05, ga=0.05, rd=0.00),
@@ -75,9 +75,9 @@ def write_ugly_workbook(actuals: dict, months: list[str], path: str) -> None:
     hdr_fill = PatternFill("solid", fgColor="44546A")
     bu_font = Font(bold=True, italic=True, color="1F3864")
 
-    ws["A1"] = "MERIDIAN INDUSTRIES S.A."
+    ws["A1"] = "MERIDIAN INDUSTRIES INC."
     ws["A1"].font = title_font
-    ws["A2"] = "Monthly Management P&L  —  values in BRL '000  —  CONFIDENTIAL"
+    ws["A2"] = "Monthly Management P&L  —  figures in USD thousands  —  CONFIDENTIAL"
     ws["A2"].font = Font(italic=True, size=10, color="808080")
     # row 3 left blank on purpose
 
@@ -110,7 +110,7 @@ def write_ugly_workbook(actuals: dict, months: list[str], path: str) -> None:
     # Budget on a second sheet: a single annual budget per BU/account (so the
     # engine has to spread/compare against a different granularity).
     wb_ws2 = wb.create_sheet("Budget FY")
-    wb_ws2["A1"] = "Annual Budget (BRL '000)"
+    wb_ws2["A1"] = "Annual Budget (USD '000)"
     wb_ws2["A1"].font = title_font
     wb_ws2.cell(3, 1, "Business Unit").font = hdr_font
     wb_ws2.cell(3, 2, "Account").font = hdr_font
