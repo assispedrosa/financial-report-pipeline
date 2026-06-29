@@ -1,5 +1,9 @@
 # Financial Report Pipeline
 
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Open%20Dashboard-FF4B4B?logo=streamlit&logoColor=white)](https://ap-financial-report.streamlit.app/)
+
+**▶ Try it live: [ap-financial-report.streamlit.app](https://ap-financial-report.streamlit.app/)** — no install required.
+
 Turn a messy, manually-maintained monthly **P&L spreadsheet** into a polished
 **PDF report** *and* a live **interactive dashboard** — from one script, on
 every refresh.
